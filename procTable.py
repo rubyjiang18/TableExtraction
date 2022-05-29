@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 """
 Script to extract the table data and metadata from the xlsx and .json files Adobe's pdf extraction api provides.
 Inserts the extracted data into MongoDB Atlas for easy cloud access.
 """
 
 # imports
-=======
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 import json
 import os
 import re
@@ -18,7 +15,6 @@ from lbnlp.models.load.matscholar_2020v1 import load
 
 mergeCol = 0
 
-<<<<<<< HEAD
 # Path to the folders Adobe's API Extracted
 folderPath = r'C:\Users\Jason\OneDrive\Documents\pdfservices-java-sdk-samples-master\output\ElsevierHEACreepPDFs\ExtractedData'
 
@@ -40,23 +36,12 @@ ner_model = load("ner")
 # ie. "C:\path\to\extracted\data" would have a depth of 5
 filepath_depth = 8
 
-=======
-loc = "fileoutpart0.xlsx"
-folderPath = r'C:\Users\Jason\Documents\pdftools\adobe-dc-pdf-services-sdk-java-samples\output\ExtractedData'
-cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
-client = MongoClient(cluster)
-db = client.data
-
-ner_model = load("ner")
-
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 elems = []
 cellCount = []
 tagged_titles = []
 titles = []
 tags = []
 
-<<<<<<< HEAD
 # If text is a number, convert it to a number
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -76,20 +61,11 @@ def natural_keys(text):
     return [atoi(c) for c in re.split(r'(\d+)', text)]
 
 # Print the elements in a MongoDB database
-=======
-def atoi(text):
-    return int(text) if text.isdigit() else text
-
-def natural_keys(text):
-    return [ atoi(c) for c in re.split(r'(\d+)', text) ]
-
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 def display(cursor):
     for document in cursor:
         print()
         pprint(document)
 
-<<<<<<< HEAD
 # Get the value of a merged cell in a xlsx file
 def unmergedValue(rowx, colx, thesheet):
     # iterate through the merged cells
@@ -100,18 +76,11 @@ def unmergedValue(rowx, colx, thesheet):
         # chi -> upper row bound of the merged cell
         rlo, rhi, clo, chi = crange
         # if the merged cell was found, return it
-=======
-
-def unmergedValue(rowx, colx, thesheet):
-    for crange in thesheet.merged_cells:
-        rlo, rhi, clo, chi = crange
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
         if rowx in range(rlo, rhi):
             if colx in range(clo, chi):
                 return thesheet.cell_value(rlo, clo)
     return thesheet.cell_value(rowx, colx)
 
-<<<<<<< HEAD
 # Detect which rows in a table are the header
 def detectHeaders(sheet, start):
     header_height = 0
@@ -126,38 +95,21 @@ def detectHeaders(sheet, start):
     # find the max number of columns
     maxCol = max(cellCount)
     # set the first header to the row after the first row with the most number of columns
-=======
-
-def detectHeaders(sheet):
-    header_height = 0
-    global cellCount
-    for crange in sheet.merged_cells:
-        rlo, rhi, clo, chi = crange
-        for row in range(rlo, rhi):
-            cellCount[row] -= chi - clo
-    maxCol = max(cellCount)
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
     for i in range(len(cellCount)):
         if cellCount[i] == maxCol:
             header_height = i + 1
             break
     return header_height
 
-<<<<<<< HEAD
 # flatten a multi dimensional list into a 1D list
 # IE: [[[1, 2], 3], [4, 5]] -> [1, 2, 3, 4, 5]
-=======
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 def flatten(tags):
     flattened_tags = []
     for sentence in tags:
         flattened_tags.extend(sentence)
     return flattened_tags
 
-<<<<<<< HEAD
 # extract the table title from the .json Adobe provides
-=======
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 def extractTitle(path):
     global tagged_titles
     global titles
@@ -165,7 +117,6 @@ def extractTitle(path):
 
     titles_list = []
     data = json.load(open(path, encoding='UTF-8'))
-<<<<<<< HEAD
     # search through all the elements in the .json
     for i in range(len(data['elements'])):
         elem = data['elements'][i]
@@ -177,15 +128,6 @@ def extractTitle(path):
                 # store the title
                 title = title_elem['Text']
                 # tag the title and store it into titles_list
-=======
-    for i in range(len(data['elements'])):
-        elem = data['elements'][i]
-        elem_path = elem['Path']
-        if re.match('^//Document/(.*?)Table(\[[1-9]\])?$', elem_path):
-            title_elem = data['elements'][i - 1]
-            if 'Text' in title_elem:
-                title = title_elem['Text']
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
                 flattened_tags = flatten(ner_model.tag_doc(title))
                 titles_list.append(flattened_tags)
             else:
@@ -194,7 +136,6 @@ def extractTitle(path):
         tagged_title = []
         title = ""
         tag = []
-<<<<<<< HEAD
         # iterate through each title
         for word in full_title:
             # if the tag is not o(other), store the word in the title in tagged title
@@ -210,42 +151,21 @@ def extractTitle(path):
 
 
 # Extract data from xlsx files
-=======
-        for word in full_title:
-            if word[1] != 'O':
-                tagged_title.append(word[0])
-                tag.append(word[1])
-            title += word[0] + " "
-        tagged_titles.append(tagged_title)
-        titles.append(title)
-        tags.append(tag)
-
-
-
-# To open Workbook
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 def extractTable(path, subdir):
     global elems
     global cellCount
     global titles
     global tagged_titles
     global tags
-<<<<<<< HEAD
     # get the title of the PDF
     path_list = subdir.split("\\")
     pdf_title = path_list[len(path_list)-2]
 
     # retrieve the pdf title, tag, and tagged title
-=======
-
-    pdf_title = subdir.split("\\")[8]
-
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
     title = titles.pop()
     tag = tags.pop()
     tagged_title = tagged_titles.pop()
 
-<<<<<<< HEAD
     # read the xlsx files using xlrd
     wb = xlrd.open_workbook(path)
     sheet = wb.sheet_by_index(0)
@@ -306,39 +226,3 @@ iterateDict()
 print("Insertion complete")
 # insert the data into MongoDB Atlas
 db.ElsevierHEACreepPDFs.insert_many(elems)
-=======
-    wb = xlrd.open_workbook(path)
-    sheet = wb.sheet_by_index(0)
-
-    cellCount = [sheet.ncols] * sheet.nrows
-    header_height = detectHeaders(sheet)
-
-    headers = []
-    for col in range(sheet.ncols):
-        header = []
-        for row in range(header_height):
-            header.append(''.join(unmergedValue(row, col, sheet).replace('.', '').splitlines()))
-        headers.append(' | '.join(header))
-
-    for row in range(header_height, sheet.nrows):
-        table = []
-        for col in range(sheet.ncols):
-            d = {'name': headers[col], 'value': ''.join(unmergedValue(row, col, sheet).splitlines())}
-            table.append(d)
-        elems.append({'body': table, 'title': title, 'tagged_title': tagged_title, 'tags': tag, 'pdf_title': pdf_title})
-
-
-def iterateDict():
-    for subdir, dirs, files in os.walk(folderPath):
-        for file in sorted(files, key=natural_keys):
-            if file.endswith('.xlsx'):
-                print(str(file))
-                extractTable(os.path.join(subdir, file), subdir)
-            if file.endswith('.json'):
-                extractTitle(os.path.join(subdir, file))
-
-
-iterateDict()
-print("Insertion complete")
-db.data.insert_many(elems)
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073

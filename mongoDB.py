@@ -1,6 +1,5 @@
 import tabulate
 from pymongo import MongoClient
-<<<<<<< HEAD
 import pandas as pd
 
 #cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
@@ -31,28 +30,16 @@ df_dict = []
 
 
 # Bold text formatting
-=======
-
-cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
-client = MongoClient(cluster)
-db = client.data
-
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 class font:
    BOLD = '\033[1m'
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
-<<<<<<< HEAD
 # Merge title with tagged title
-=======
-
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 def merge(list1, list2):
     merged_list = ["("+list1[i]+", "+list2[i]+")" for i in range(0, len(list1))]
     return merged_list
 
-<<<<<<< HEAD
 def mergeTables(df_dict):
     b = len(df_dict)
     cbdf_list = {}
@@ -159,44 +146,13 @@ def searchHeader(elem, db):
 # Search only in the Value. Return cursor with elements containing the desired value in the table
 def searchValue(elem, db):
     cursor = db.find({
-=======
-def display(cursor):
-    print("Searches found: "+ str(cursor.count()))
-    print("____________________________________________ \n \n ")
-    for document in cursor:
-        print(font.BOLD + font.UNDERLINE + "PDF Title:" + font.END + " " + document['pdf_title'])
-        print(font.BOLD + font.UNDERLINE + "Title:" + font.END + " " + document['title'])
-        tagged_title = merge(document['tagged_title'], document['tags'])
-        print(font.BOLD + font.UNDERLINE + "Tagged Title:" + font.END + " " + ", ".join(tagged_title))
-        output = {}
-        for elem in document['body']:
-            output[elem['name']] = elem['value']
-
-        rows = [output.values()]
-        header = [font.BOLD+ elem + font.END for elem in output.keys()]
-        print(tabulate.tabulate(rows, header))
-        print("\n\n_______________________________________________________________________________________________\n\n")
-
-def searchHeader(elem):
-    cursor = db.data.find({
-        'body': {'$elemMatch': {'name': {'$regex': elem}}}
-    })
-    return cursor
-def searchValue(elem):
-    cursor = db.data.find({
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
         'body': {'$elemMatch': {'value': {'$regex': elem}}}
     })
     return cursor
 
-<<<<<<< HEAD
 # Search both the header and value. Return cursor with elements that contain the desired header or value in the table
 def search(elem, db):
     cursor = db.find({
-=======
-def search(elem):
-    cursor = db.data.find({
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
         '$or':[
             {'body': {'$elemMatch': {'value': {'$regex': elem}}}},
             {'body': {'$elemMatch': {'name': {'$regex': elem}}}}
@@ -204,7 +160,6 @@ def search(elem):
     })
     return cursor
 
-<<<<<<< HEAD
 # Same as above but with the PDF Title
 def searchPDFTitle(elem, db):
     cursor = db.find({'pdf_title': {'$regex': elem}})
@@ -218,18 +173,6 @@ def searchTitle(elem, db):
 # Same as above but with table title tags
 def searchTags(elem, db):
     cursor = db.find({
-=======
-def searchPDFTitle(elem):
-    cursor = db.data.find({'pdf_title': {'$regex': elem}})
-    return cursor
-
-def searchTitle(elem):
-    cursor = db.data.find({'title': {'$regex': elem}})
-    return cursor
-
-def searchTags(elem):
-    cursor = db.data.find({
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
         'tags': {'$elemMatch': {'$regex': elem}}
     })
     return cursor
@@ -237,7 +180,6 @@ def searchTags(elem):
 
 running = True
 while running:
-<<<<<<< HEAD
     # Prompt user
     value = input("How would you like to search? (1)Table header, (2)Value, (3)Header and Value, (4)Pdf title, (5)Table title, or (6)Title tags: ")
     searchType = input("Would you like to search for (1)individual words or (2)parts of words?")
@@ -267,23 +209,5 @@ while running:
         cbdf.to_csv(elem+value+searchType+searchDatabase + '.csv', index=False)
     df_dict = []
     print("\n\n\n\n\n_______________________________________________________________________________________________\n\n")
-=======
-    val = input("How would you like to search? (1)Table header, (2)Value, (3)Header and Value, (4)Pdf title, (5)Table title, or (6)Title tags: ")
-    elem = input("What would you like to search for: ")
-    if val == '1':
-        display(searchHeader(elem))
-    elif val == '2':
-        display(searchValue(elem))
-    elif val == '3':
-        display(search(elem))
-    elif val == '4':
-        display(searchPDFTitle(elem))
-    elif val == '5':
-        display(searchTitle(elem))
-    elif val == '6':
-        display(searchTags(elem))
-    else:
-        print('Please input a number')
->>>>>>> bc13ca7a9209d1d0e2ebfd6aa7ef51e108b3f073
 
 
