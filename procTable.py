@@ -176,8 +176,8 @@ def extractTable(path, subdir):
     if len(cellCount) > 0:
         # check if the first row of the table is a single merged cell
         start = 0
-        if len(sheet.merged_cells)>0:
-            rlo, rhi, clo, chi =  sheet.merged_cells[0]
+        if len(sheet.merged_cells) > 0:
+            rlo, rhi, clo, chi = sheet.merged_cells[0]
             # if it is, Adobe likely extracted the table title with the table
             if rhi == 1 and rlo == 0 and chi-clo == sheet.ncols:
                 # correct table title
