@@ -50,16 +50,10 @@ This last step is to fix the encoding issue with Windows as it uses CP1252 encod
 # procTable
 lists:
 elems = []
-
 cellCount = []
+titles = [], this is title of each table.
 
-tagged_titles = []
+tagged_titles = [], this is the word in the tablt title this is being tagged. It should be renamed into tagged_word for better understanding. But we will keep it title so far to keep the MongoDB consistent.
+tags = [], this is tag for the tagged_title.
 
-titles = []
-
-tags = []
-
-extractTable function extract data from xlsx files
-    pdf_title: same for files in the same folder, for example, ElsevierHEACreepPDFs.
-
-
+Example word = ('crystallographic', 'B-PRO'), word[0] is tagged_title, word[1] is tag.
