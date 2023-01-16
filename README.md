@@ -9,7 +9,45 @@ ProcTable - Extract the table data and metadata from the xlsx and .json files fr
 Table Counter - Script to count the current number of tables in a directory
 
 
-## procTable
+# Ebvironment setup notes:
+The LBNLP version on GitHub had some issues. The first of which was compatibility issues between the dependencies the library uses (I'm not sure if this is the issue you are running into). The second issue I ran into was a problem with Window's encoding, however, I'm not sure if you will run into this issue as you are on Mac.
+
+When I installed LBNLP, I created a list of steps I took (Note this is all for Windows however all of the pip commands should work with Mac).
+
+1. Download VC++ complier (just selecct the desktop build tool)
+https://visualstudio.microsoft.com/visual-cpp-build-tools/
+
+2. Install lbnlp:
+pip install git+https://github.com/lbnlp/lbnlp.git
+
+2. install NER requirements (tensorflow 1.15.0 requires python 3.7)
+pip install -r [your_path]\lbnlp\requirements-ner.txt
+
+3. update numpy to the latest version(1.21.1) -> it has to be 1.18.4
+pip install numpy -U
+
+4. download data for ChemDataExtractor
+cde data download
+
+5. show all installed package
+pip list
+
+6. Requirements for running the ner module on lbnlp
+tensorflow==1.15.0
+numpy==1.21.1
+gensim==3.7.1
+pymatgen==2019.9.8
+
+7. modify file open, add utf-8 to file open call
+[your_path]\Python\Python37\Lib\site-packages\lbnlp\ner\data_utils.py
+line 191:  with open(filename, encoding='utf-8') as f:
+
+This last step is to fix the encoding issue with Windows as it uses CP1252 encoding by default, however, Mac uses UTF-8 by default so this should not be an issue.
+
+8. pip install protobuf==3.20.*
+
+
+# procTable
 lists:
 elems = []
 
@@ -23,3 +61,5 @@ tags = []
 
 extractTable function extract data from xlsx files
     pdf_title: same for files in the same folder, for example, ElsevierHEACreepPDFs.
+
+
