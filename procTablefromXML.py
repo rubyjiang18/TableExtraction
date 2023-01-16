@@ -106,11 +106,6 @@ def extractTable(xlsx_path, subdir):
     pdf_title = path_list[len(path_list)-2]
     print('pdf_title: ', pdf_title)
 
-    # # retrieve the pdf title, tag, and tagged title
-    # title = titles.pop()
-    # tag = tags.pop()
-    # tagged_title = tagged_titles.pop()
-
     # read the xlsx files using xlrd
     print('xlsx_path: ', xlsx_path)
     #wb = xlrd.open_workbook(xlsx_path)
@@ -121,15 +116,21 @@ def extractTable(xlsx_path, subdir):
     #cellCount = [sheet.ncols] * sheet.nrows
     cellCount = [sheet.shape[1]] * sheet.shape[0]
 
-
-    #check if the first row is the table title
+    #first row is the table title
     if len(cellCount) > 0:
         title = sheet.iloc[0,0]
         print('table title: ', title)
         tag, tagged_title = processTitle(title)
 
-        # 'na' headers
-        headers = ['na'] * sheet.shape[1]
+        # # 'na' headers
+        # headers = ['na'] * sheet.shape[1]
+        # we assume second row is header and all the rows down there are table contents
+        headers = sheet.iloc[1].to_list() # second row
+        header_length = len(headers)
+        if header_length < sheet.shape[1]:
+            for i in range(sheet.shape[1] - header_length):
+                headers.append("na" + str(i))
+        print("headers: ")
         print(headers)
 
         # insert the rest of the data in the table
