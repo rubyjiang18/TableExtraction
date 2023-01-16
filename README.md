@@ -23,8 +23,8 @@ pip install git+https://github.com/lbnlp/lbnlp.git
 2. install NER requirements (tensorflow 1.15.0 requires python 3.7)
 pip install -r [your_path]\lbnlp\requirements-ner.txt
 
-3. update numpy to the latest version(1.21.1) -> it has to be 1.18.4
-pip install numpy -U
+3. install numpy version 1.18.4
+pip install numpy==1.18.4
 
 4. download data for ChemDataExtractor
 cde data download
