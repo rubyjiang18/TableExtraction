@@ -13,13 +13,13 @@ import pprint
 import pandas as pd
 
 from pymongo import MongoClient
-#from lbnlp.models.load.matscholar_2020v1 import load
+from lbnlp.models.load.matscholar_2020v1 import load
 
 mergeCol = 0
 
 # Path to the folders Adobe's API Extracted
 #folderPath = r'C:\Users\Jason\OneDrive\Documents\pdfservices-java-sdk-samples-master\output\ElsevierHEACreepPDFs\ExtractedData'
-folderPath = r'/Users/rubyjiang/Desktop/HTMDEC/table_extractor/tableextractor/test/ExtractedData'
+folderPath = r'/Users/rubyjiang/Desktop/xml_table_extractor_fake/tableextractor/test/ExtractedData'
 
 # cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false"
 
@@ -33,7 +33,8 @@ client = MongoClient(cluster)
 db = client.data
 
 # Load the NER(Named entity regognition) from LBNLP
-#ner_model = load("ner")
+ner_model = load("ner")
+print('model_loaded!')
 
 # depth of the file path
 # ie. "C:\path\to\extracted\data" would have a depth of 5
@@ -42,7 +43,6 @@ filepath_depth = 8
 elems = []
 cellCount = []
 tagged_titles = []
-# table titles
 titles = []
 tags = []
 
@@ -78,52 +78,21 @@ def flatten(tags):
         flattened_tags.extend(sentence)
     return flattened_tags
 
-# # # extract the table title from the .json Adobe provides
-# # ruby's note: first row in excel file
-# def extractTitle(path):
-#     global tagged_titles
-#     global titles
-#     global tags
-
-#     titles_list = [] # store list of tags
-#     data = json.load(open(path, encoding='UTF-8'))
-#     # search through all the elements in the .json
-#     for i in range(len(data['elements'])):
-#         elem = data['elements'][i]
-#         elem_path = elem['Path']
-#         # find the elements that are tables
-#         if re.match('^//Document/(.*?)Table(\[[0-9]+\])?$', elem_path):
-#             title_elem = data['elements'][i - 1]
-#             if 'Text' in title_elem:
-#                 # store the title
-#                 title = title_elem['Text']
-#                 # tag the title and store it into titles_list
-#                 flattened_tags = flatten(ner_model.tag_doc(title))
-#                 titles_list.append(flattened_tags)
-#             else:
-#                 titles_list.append("")
-#     for full_title in titles_list:
-#         tagged_title = []
-#         title = ""
-#         tag = []
-#         # iterate through each title
-#         for word in full_title:
-#             # if the tag is not o(other), store the word in the title in tagged title
-#             if word[1] != 'O':
-#                 tagged_title.append(word[0])
-#                 tag.append(word[1])
-#             # store the title itself
-#             title += word[0] + " "
-#         # add the tagged title, title, and tags to separate lists
-#         tagged_titles.insert(0, tagged_title)
-#         titles.insert(0, title)
-#         tags.insert(0, tag)
-
-def processTitle(xlsx_path):
+def processTitle(title):
     '''
     The first row of each xlsx file has the title
     '''
-    return None, None
+    flattened_tags = flatten(ner_model.tag_doc(title))
+    tags = []
+    tagged_titles = []
+    # raw_tag example ('crystallographic', 'B-PRO')
+    for raw_tags in flattened_tags:
+        if raw_tags[1] != 'O':
+            tag = raw_tags[1]
+            tagged_title = raw_tags[0]
+            tags.append(tag)
+            tagged_titles.append(tagged_title)
+    return tags, tagged_titles
 
 # Extract data from xlsx files
 def extractTable(xlsx_path, subdir):
@@ -189,18 +158,18 @@ def iterateDict():
                 extractTable(xlsx_path, subdir)
 
 ###### Insert all elems into DB   
-# # # run the iterateDict which starts the process
-# iterateDict()
+# # run the iterateDict which starts the process
+iterateDict()
 
-# # inform user that the insertion is complete
-# print("Insertion complete")
-# # insert the data into MongoDB Atlas
-# #db.ElsevierHEACreepPDFs.insert_many(elems)
-# db.UncertaintyQuantification.insert_many(elems)
+# inform user that the insertion is complete
+print("Insertion complete")
+# insert the data into MongoDB Atlas
+#db.ElsevierHEACreepPDFs.insert_many(elems)
+db.UncertaintyQuantification.insert_many(elems)
 
 
-if __name__ == "__main__":
-    iterateDict()
-    #print(elems)
-    print(len(elems))
-    print('done!') 
+# if __name__ == "__main__":
+#     iterateDict()
+#     #print(elems)
+#     print(len(elems))
+#     print('done!') 
