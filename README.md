@@ -34,7 +34,7 @@ pip list
 
 6. Requirements for running the ner module on lbnlp
 tensorflow==1.15.0
-numpy==1.21.1
+numpy==1.18.4
 gensim==3.7.1
 pymatgen==2019.9.8
 
